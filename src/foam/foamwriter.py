@@ -89,7 +89,7 @@ class FoamWriter:
                 self.write_value(o)
             self.file.write(")")
         elif items:
-            self.file.write("{0}(".format(len(items)))
+            self.file.write("(")
             self.indent_push()
             for o in items:
                 self.new_line()

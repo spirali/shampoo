@@ -62,5 +62,5 @@ class FoamFile:
         self.header_dict = FoamDict("FoamFile")
         self.header_dict.add("version", 2.0)
         self.header_dict.add("format", "ascii")
-        self.header_dict.add("version", class_name)
-        self.header_dict.add("version", object_name)
+        self.header_dict.add("class", class_name)
+        self.header_dict.add("object", object_name)

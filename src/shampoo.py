@@ -58,6 +58,7 @@ class Shampoo:
         self.window.set_case(self.case)
 
     def save(self):
+        self.case.path = "/home/spirali/tmp/svtest"
         if self.case.path:
             self.case.save()
         else:
