@@ -113,6 +113,10 @@ class MainWindow(QMainWindow):
         a = menu.addAction("&Quit")
         a.triggered.connect(self.shampoo.app.quit)
 
+        menu = self.menuBar().addMenu("&Options")
+        a = menu.addAction("&Configure Shampoo")
+        a.triggered.connect(self.shampoo.configure)
+
     def _create_central_widget(self):
 
         tabs = QTabWidget()

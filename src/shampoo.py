@@ -17,8 +17,9 @@
 #
 
 from foam.case import Case
+from ui.config import ConfigDialog
 
-from PyQt4.QtCore import QProcess
+from PyQt4.QtCore import QProcess, QSettings
 from PyQt4.QtGui import QApplication, QFileDialog
 from ui.mainwindow import MainWindow
 import argparse
@@ -30,6 +31,7 @@ class Shampoo:
 
     def __init__(self):
         self.app = QApplication(sys.argv)
+        self.settings = QSettings("shampoo", "shampoo")
         self.window = MainWindow(self)
 
         args = self._parse_args()
@@ -98,6 +100,10 @@ class Shampoo:
         process.start(program_name)
         self.window.console.set_process(process)
 
+    def configure(self):
+        dialog = ConfigDialog(self.window, self.settings)
+        if dialog.exec_():
+            self.settings.sync()
 
 if __name__ == "__main__":
     sys.exit(Shampoo().main())
