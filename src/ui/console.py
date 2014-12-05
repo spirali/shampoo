@@ -44,6 +44,7 @@ class Console(QPlainTextEdit):
         process.readyReadStandardError.connect(self.write_stderr)
         process.error.connect(self.show_error)
         process.finished.connect(self.show_finished)
+        self.clear()
 
     def write_stdout(self):
         self.appendPlainText(

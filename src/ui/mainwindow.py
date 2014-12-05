@@ -153,7 +153,7 @@ class MainWindow(QMainWindow):
         layout = QVBoxLayout()
         buttons.setLayout(layout)
 
-        button = QPushButton("Make Basemesh")
+        button = QPushButton("Run blockMesh")
         button.clicked.connect(self.shampoo.run)
         layout.addWidget(button)
 

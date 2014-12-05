@@ -25,6 +25,7 @@ from ui.mainwindow import MainWindow
 import argparse
 import logging
 import sys
+import os
 
 
 class Shampoo:
@@ -94,11 +95,29 @@ class Shampoo:
         return parser.parse_args()
 
     def run(self):
-        program_name = "/bin/ls"
-        logging.info("Running %s", program_name)
+        if not self.settings.value("openfoam/path"):
+            self.window.console.write_error("Path to OpenFOAM is not set")
+            return
+
+        if not self.case.path:
+            self.window.console.write_error("Shampoo project is not saved")
+            return
+
+        self.case.save()
+
+        path = os.path.join(self.settings.value("openfoam/path"), "etc/bashrc")
+        commands = "source {0}\n{1}\n".format(
+                path,
+                "blockMesh")
+
+        program_name = "/bin/bash"
+        logging.info("Running %s", "blockMesh")
         process = QProcess()
-        process.start(program_name)
         self.window.console.set_process(process)
+        process.setWorkingDirectory(self.case.path)
+        process.start(program_name)
+        process.write(commands)
+        process.closeWriteChannel()
 
     def configure(self):
         dialog = ConfigDialog(self.window, self.settings)
