@@ -23,6 +23,7 @@ from base.project import Project
 from foam.basemesh import BaseMesh
 from foam.datatypes import FoamDict
 from foam.foamfile import FoamFile
+from foam.snapping import Snapping
 
 import logging
 import os.path
@@ -34,11 +35,11 @@ class Case(Project):
         super().__init__()
         self.path = None
         self.basemesh = BaseMesh(self)
+        self.snapping = Snapping(self)
         self.control_dict = self._make_default_control_dict()
 
         self.need_redraw = Signal()
         self.rebuild_scene = Signal()
-
 
     def load(self, path):
         self.path = path
@@ -60,6 +61,7 @@ class Case(Project):
     def make_tree(self, parent=None):
         tree = ConfigTree(parent)
         tree.add_node(self.basemesh.make_cnode())
+        tree.add_node(self.snapping.make_cnode())
         tree.set_colors()
         return tree
 

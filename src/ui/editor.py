@@ -26,12 +26,16 @@ from PyQt4.QtGui import QLineEdit, \
                         QSpinBox, \
                         QHBoxLayout, \
                         QRegExpValidator, \
-                        QComboBox
+                        QComboBox, \
+                        QCheckBox
 import PyQt4.QtCore as QtCore
 import logging
 
+class EditorBase:
+    set_text = False
 
-class FloatEditor:
+
+class FloatEditor(EditorBase):
 
     def make_widget(self, pointer):
         def value_changed(value):
@@ -49,7 +53,7 @@ class FloatEditor:
         return widget
 
 
-class StringEditor:
+class StringEditor(EditorBase):
 
     def __init__(self, regex=None, identifier=False):
         if identifier:
@@ -71,7 +75,7 @@ class StringEditor:
         return widget
 
 
-class IntEditor:
+class IntEditor(EditorBase):
 
     def __init__(self, min_value, max_value):
         self.min_value = min_value
@@ -80,17 +84,30 @@ class IntEditor:
     def make_widget(self, pointer):
         def value_changed(value):
             pointer.set(value)
-            #if call_update:
-            #    owner.update()
         widget = QSpinBox()
         widget.setMinimum(self.min_value)
         widget.setMaximum(self.max_value)
         widget.setValue(pointer.get())
-        #widget.setValidator(QDoubleValidator())
         widget.valueChanged.connect(value_changed)
         return widget
 
-class ChooseEditor:
+
+class BoolEditor(EditorBase):
+
+    set_text = True
+
+    def __init__(self):
+        pass
+
+    def make_widget(self, pointer):
+        def value_changed(value):
+            pointer.set(value)
+        widget = QCheckBox()
+        #widget.valueChanged.connect(value_changed)
+        return widget
+
+
+class ChooseEditor(EditorBase):
 
     def __init__(self, options):
         self.options = options
@@ -106,7 +123,7 @@ class ChooseEditor:
 
         return widget
 
-class VertexEditor:
+class VertexEditor(EditorBase):
 
     def __init__(self):
         pass
@@ -142,6 +159,7 @@ class VertexEditor:
 
         return layout
 
+
 class Group:
 
     def __init__(self, name):
@@ -158,9 +176,12 @@ class Group:
             else:
                 update_callback = None
             pointer = make_pointer(owner, attr, update_callback)
-            form_layout.addRow(name,
-                               editor.make_widget(pointer))
-
+            widget = editor.make_widget(pointer)
+            if editor.set_text:
+                widget.setText(name)
+                form_layout.addRow(widget)
+            else:
+                form_layout.addRow(name, widget)
 
         form_layout = QFormLayout()
         box = QGroupBox(self.name);
@@ -175,6 +196,9 @@ class Group:
 
     def add_int(self, name, attr, update_method="update", *args, **kw):
         self.add(IntEditor(*args, **kw), name, attr, update_method)
+
+    def add_bool(self, name, attr, update_method="update", *args, **kw):
+        self.add(BoolEditor(*args, **kw), name, attr, update_method)
 
     def add_vertex(self, name, attr, update_method="update", *args, **kw):
         self.add(VertexEditor(*args, **kw), name, attr, update_method)
